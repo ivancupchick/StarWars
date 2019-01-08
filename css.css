@@ -9,7 +9,7 @@ html, body, ul, li {
     height: 2000px;
 }
 .mainPage {
-    display: block;
+    display: none;
 }
 .previoslyPage {
     display: block;
