@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>People in Star Wars</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="css.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="bootstrap.css" />
+    <script src="js.js"></script>
+</head>
+<body>
+    <div id="mainContent" class="mainContent">
+        <div id="previoslyPage" class="previoslyPage" >
+            <button id="loadButton" class="btn-primary loadButton" onclick="loadApp()" >Load App</button>
+        </div>
+        <div id="mainPage" class="mainPage">
+            <input type="text" id='searchInput' class="searchInput" placeholder='Search by name'>
+            <div>
+                <div id="person1" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg1" onclick="personDescriptionDown(1)" class="imagePerson" src="images/arrow.png">   
+                </div>
+                <div id="person2" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg2" onclick="personDescriptionDown(2)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person3" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg3" onclick="personDescriptionDown(3)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person4" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg4" onclick="personDescriptionDown(4)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person5" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg5" onclick="personDescriptionDown(5)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person6" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg6" onclick="personDescriptionDown(6)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person7" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg7" onclick="personDescriptionDown(7)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person8" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg8" onclick="personDescriptionDown(8)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person9" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg9" onclick="personDescriptionDown(9)" class="imagePerson" src="images/arrow.png">
+                </div>
+                <div id="person10" class="person"><p class="textPerson">Person name</p>
+                    <img id="personImg10" onclick="personDescriptionDown(10)" class="imagePerson" src="images/arrow.png">
+                </div>
+            </div>
+            <div id="pagination">
+                <button type="button" class="pagination" onclick="prevPage()" ><p>Prev</p></button>
+                <button id="currentPage" type="button" disabled ><p>1</p></button>
+                <button type="button" class="pagination" onclick="nextPage()" ><p>Next</p></button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
