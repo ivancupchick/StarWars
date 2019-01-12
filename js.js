@@ -20,7 +20,7 @@ function createPersons() {
   for (let i = 1; i < 11; i++) {
     let liPerson = document.createElement('li');
     liPerson.setAttribute('id', 'person' + i);
-    liPerson.setAttribute('class', 'person list-group-item');
+    liPerson.setAttribute('class', 'person');
     let namePerson = document.createElement('p');
     namePerson.setAttribute('class', 'textPerson');
     liPerson.appendChild(namePerson);
