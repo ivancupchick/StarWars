@@ -8,38 +8,34 @@ html, body, ul, li {
     width: 300px;
     height: 2000px;
 }
-.mainPage {
-    display: none;
-}
-.previoslyPage {
-    display: block;
-    width: 300px;
-    height: 300px;
-}
-.loadButton {
-    position: relative;
-    width: 100px;
-    left: 100px;
-    top: 130px;
+#searchDiv {
+    display: flex;
+    height: 35px;
 }
 .searchInput {
-    width: 100%;
-    min-width: 50px;
+    width: 70%;
+}
+.searchButton {
+    width: 30%;
+}
+.searchButton p {
+    position: relative;
+    top: 3.7px;
 }
 .textPerson {
     position: relative;
     top: 15px;
     text-align: center;
-    padding: 0 0 0 0;
-    margin: 0 0 0 0;
+    padding: 0;
+    margin: 0;
     font-weight: bold;
 }
 .imagePerson {
     position: relative;
     left: 260px;
-    bottom: 11px;
-    border: solid 1px rgba(204, 204, 204, 0.527);
+    bottom: 9px;
     padding: 3px;
+    font-size: 15px;
 }
 .person {
     width: 300px;
@@ -72,4 +68,21 @@ html, body, ul, li {
 #currentPage p {
     position: relative;
     top: 7.5px;
+}
+#load { 
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 9999;
+    background: url(images/spinner2.gif) no-repeat center center white;
+}
+.person ul {
+    height: 150px;
+    margin: 0 0 10px;
+}
+.person ul li { 
+    height: 30px;
+    width: 250px;
+    font-size: 15px;
+    padding: 4px;
 }
