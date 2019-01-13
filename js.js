@@ -11,7 +11,6 @@ function createArrows() {
     let arrow = document.createElement('i');
     arrow.setAttribute('id', 'personImg' + i);
     arrow.setAttribute('class', 'fas fa-arrow-down imagePerson');
-    arrow.setAttribute('onclick', 'personDescriptionUpDown(' + i + ')');
     parrent.appendChild(arrow);
   }
 }
@@ -21,6 +20,7 @@ function createPersons() {
     let liPerson = document.createElement('li');
     liPerson.setAttribute('id', 'person' + i);
     liPerson.setAttribute('class', 'person');
+    liPerson.setAttribute('onclick', 'personDescriptionUpDown(' + i + ')');
     let namePerson = document.createElement('p');
     namePerson.setAttribute('class', 'textPerson');
     liPerson.appendChild(namePerson);
@@ -153,7 +153,7 @@ function prevPage() {
   }
   document.getElementById('currentPage').firstChild.innerHTML = numberCurrentPage - 1;
   numberCurrentPage -= 1;
-  fillCharacters(numberCurrentPage);
+  cheackLocalStorage(numberCurrentPage);
 }
 function nextPage() {
   let numberCurrentPage = document.getElementById('currentPage').firstChild.innerHTML;
@@ -170,12 +170,12 @@ function nextPage() {
 }
 // Search
 function search() {
+  document.getElementById('currentPage').firstChild.innerHTML = 1;
   let searchedCharacters = [];
   if (document.getElementById('searchInput').value == '') { 
     finalSearch(searchedCharacters);
     return;
   }
-
   let searchingName = document.getElementById('searchInput').value;
   document.getElementById('searchInput').value = '';
   hideAllPersons();
@@ -192,7 +192,6 @@ function search() {
       for (let j = 1; j < 8; j++) {
         let nameCharacter = page.results[j - 1].name.toLowerCase();
         if (nameCharacter.includes(searchingName)) { 
-          alert(nameCharacter);
           searchedCharacters.push(page.results[j - 1].name);
         }
         if (j == 7) { // lastCharacter
@@ -205,7 +204,6 @@ function search() {
       for (let j = 1; j < 11; j++) {
         let nameCharacter = page.results[j - 1].name.toLowerCase();
         if (nameCharacter.includes(searchingName)) {
-          alert(nameCharacter);
           searchedCharacters.push(page.results[j - 1].name);
         }
       }
@@ -233,14 +231,13 @@ function showSearchingPersons(searchedCharacters) {
   }
   showAllPersons(quantityPersons);
 }
-// PEREDELAT' KNOPKU 
 function createButtonShow() {
   let parent = document.getElementById('mainContent');
   let but = document.createElement('button');
   parent.appendChild(but);
-  but.setAttribute('onclick', 'showAllPersons()');
+  but.setAttribute('onclick', 'cheackLocalStorage(1)');
   but.setAttribute('id', 'buttonShow');
-  but.innerHTML = 'Показать';
+  but.innerHTML = 'На главную';
 }
 // hide/show persons
 function hideAllPersons() {

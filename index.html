@@ -7,8 +7,8 @@
 
     <title>People in Star Wars</title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="css.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="bootstrap.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/css.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css" />
 
     <script src="js.js"></script>
 
@@ -16,10 +16,11 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/fontawesome.css" integrity="sha384-jLuaxTTBR42U2qJ/pm4JRouHkEDHkVqH0T1nyQXn1mZ7Snycpf6Rl25VBNthU4z0" crossorigin="anonymous">
 </head>
 <body>
+<div class="background">
   <div id="load">
   </div>
 
-  <div id="mainContent" class="mainContent"> 
+  <div id="mainContent" class="mainContent col-md-4 col-sm-6"> 
     <div id="searchDiv">
     <input type="text" id='searchInput' class="searchInput" placeholder='Search by name'>
     <button type="button" class="btn-danger searchButton" onclick="search()">
@@ -27,21 +28,22 @@
     </button>
     </div>
 
-    <ul id="persons" class="list-group">
+    <ul id="persons">
     </ul>
 
     <div id="pagination">
-      <button id="prevButton" type="button" class="pagination" onclick="prevPage()">
-        <p>Prev</p>
+      <button id="prevButton" type="button" class="MyPagination" onclick="prevPage()">
+          <i class="fas fa-arrow-circle-left"></i>
       </button>
             
-      <button id="currentPage" type="button" disabled><p>1</p>
+      <button id="currentPage" class="MyPagination" type="button" disabled><p>1</p>
       </button>
 
-      <button id="nextButton" type="button" class="pagination" onclick="nextPage()">
-        <p>Next</p>
+      <button id="nextButton" type="button" class="MyPagination" onclick="nextPage()">
+          <i class="fas fa-arrow-circle-right"></i>
       </button>
     </div>
   </div>
+</div>
 </body>
 </html>
