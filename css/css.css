@@ -112,7 +112,7 @@ html, ul, body, li {
 }
 .searchButton p {
     position: relative;
-    top: 3.7px;
+    top: 2.5px;
 }
 #searchDiv ::placeholder {
     color: red;
