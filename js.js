@@ -183,6 +183,7 @@ function nextPage() {
   getId('currentPage').firstChild.innerHTML = currentPage + 1;
   cheackLocalStorage(currentPage + 1);
 }
+
 // Search
 function search() {
   getId('currentPage').firstChild.innerHTML = 1;
@@ -229,6 +230,7 @@ function search() {
 
   }
 }
+
 function finalSearch(searchedCharacters) {
   if (searchedCharacters.length == 0) {
     alert('Ничего не найдено');
@@ -241,6 +243,7 @@ function finalSearch(searchedCharacters) {
   createButtonShow();
   return;
 }
+
 function showSearchingPersons(searchedCharacters) {
   let quantityPersons = searchedCharacters.length + 1;
 
@@ -254,6 +257,7 @@ function showSearchingPersons(searchedCharacters) {
 
   showAllPersons(quantityPersons);
 }
+
 function createButtonShow() {
   let parent = getId('mainContent');
   let buttonShow = createElem('button');
@@ -263,6 +267,7 @@ function createButtonShow() {
   buttonShow.setAttribute('id', 'buttonShow');
   buttonShow.innerHTML = 'На главную';
 }
+
 // hide/show persons
 function hideAllPersons() {
   for (let i = 1; i < 11; i++) {
