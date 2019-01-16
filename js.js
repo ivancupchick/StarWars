@@ -1,47 +1,66 @@
+"use strict";
+
+const simpleArray = [,'','','','','','','','','',''];
+
 window.onload = function() {
-  document.getElementById('prevButton').setAttribute('disabled', '');
+  getId('prevButton').setAttribute('disabled', '');
   createPersons();
   createArrows();
   cheackLocalStorage(1);
 }
+
+function getId(id) {
+  return document.getElementById(id);
+}
+
+function createElem(name) {
+  return document.createElement(name);
+}
+
 // Create Markup
 function createArrows() {
-  for (let i = 1; i < 11; i++) {
-    let parrent = document.getElementById('person' + i);
-    let arrow = document.createElement('i');
+  for (let i in simpleArray) {
+    let parrent = getId('person' + i);
+    let arrow = createElem('i');
+
     arrow.setAttribute('id', 'personImg' + i);
     arrow.setAttribute('class', 'fas fa-arrow-down imagePerson');
     parrent.appendChild(arrow);
   }
 }
+
 function createPersons() {
-  let ulPersons = document.getElementById('persons');
-  for (let i = 1; i < 11; i++) {
-    let liPerson = document.createElement('li');
+  let ulPersons = getId('persons');
+  for (let i in simpleArray) {
+    let liPerson = createElem('li');
+    let namePerson = createElem('p');
+
     liPerson.setAttribute('id', 'person' + i);
     liPerson.setAttribute('class', 'person');
     liPerson.setAttribute('onclick', 'personDescriptionUpDown(' + i + ')');
-    let namePerson = document.createElement('p');
+    
     namePerson.setAttribute('class', 'textPerson');
     liPerson.appendChild(namePerson);
     ulPersons.appendChild(liPerson);
   }
 }
-// Fill
+
+// Fill fields
 function cheackLocalStorage(pageNumber) {
   hideAllPersons();
-  if (localStorage.getItem('page' + pageNumber) != undefined) {
+  if (localStorage.getItem('page' + pageNumber)) {
     fillCharacters(pageNumber);
   } else {
-    renderDate(pageNumber);
+    renderData(pageNumber);
     cheackerLocalStorage(pageNumber);
   };
 }
-function renderDate(pageNumber) {
+
+function renderData(pageNumber) {
   let request = new  XMLHttpRequest();
   request.open('GET', 'https://swapi.co/api/people/?page=' + pageNumber);
   request.send(null);
-  request.onreadystatechange = function() {
+  request.onreadystatechange = () => {
     if (request.readyState !== 4) {
         return;
       }
@@ -51,163 +70,163 @@ function renderDate(pageNumber) {
     }
   }
 }
+
 function cheackerLocalStorage(pageNumber) {
-  let checkerTroughInterval = setInterval( 
-    function() {
-      if (localStorage.getItem('page' + pageNumber) == undefined) {
-        return;
-      }
-      clearInterval(checkerTroughInterval);  
-      cheackLocalStorage(pageNumber);
-      return; 
-    }, 200)
+  let cheackerInterval = setInterval( () => {
+    if ( !localStorage.getItem('page' + pageNumber) ) {
+      return;
+    }
+    clearInterval(cheackerInterval);  
+    return cheackLocalStorage(pageNumber); 
+  }, 200);
 }
+
 function fillCharacters(pageNumber) {
-  let page = JSON.parse(localStorage.getItem('page' + pageNumber));
-  if (pageNumber == 9) {
-      for (let i = 1; i < 8; i++) {
-      document.getElementById('person' + i).firstChild.innerHTML = page.results[i - 1].name;
-    }
-    showAllPersons(8);
-  } else {
-    for (let i = 1; i < 11; i++) {
-      document.getElementById('person' + i).firstChild.innerHTML = page.results[i - 1].name;
-    }
-  showAllPersons(11);
-  }
+  let page = JSON.parse( localStorage.getItem('page' + pageNumber) );
+  page.results.forEach( (item, i) => {
+    let numberPerson = +i + 1;
+    getId('person' + numberPerson).firstChild.innerHTML = item.name;
+  } );
+  showAllPersons(page.results.length + 1);
 }
+
 // Description
-function personDescriptionUpDown(number) {
-  if (document.getElementById('description' + number) != undefined) { //up
-    let arrow = document.getElementById('personImg' + number);
+function personDescriptionUpDown(numberPerson) {
+  if ( getId('description' + numberPerson) ) { //up
+    let arrow = getId('personImg' + numberPerson);
     arrow.setAttribute('class', 'fas fa-arrow-down imagePerson');
-    removeDescription(number);
+    removeDescription(numberPerson);
   } else { // down
-    let arrow = document.getElementById('personImg' + number);
+    let arrow = getId('personImg' + numberPerson);
     arrow.setAttribute('class', 'fas fa-arrow-left imagePerson');
 
-    let person = document.getElementById('person' + number);
-    let description = document.createElement('ul');
+    let person = getId('person' + numberPerson);
+    let description = createElem('ul');
+
     person.appendChild(description);
-    description.setAttribute('id', 'description' + number);
+    description.setAttribute('id', 'description' + numberPerson);
     description.setAttribute('class', 'list-group');
-    createDescription(number);
+    createDescription(numberPerson);
   }
 }
-function createDescription(number) {
-  let character  = seekCurrentCharacter(number);
+
+function createDescription(numberPerson) {
+  let character  = seekCurrentCharacter(numberPerson);
+  let description = getId('description' + numberPerson);
   for (let i = 1; i < 6; i++) {
-    let descriptionP = document.createElement('li');
-    let description = document.getElementById('description' + number);
-    description.appendChild(descriptionP);
-    descriptionP.setAttribute('id', 'person' + number + 'description' + i);
-    descriptionP.setAttribute('class', 'list-group-item');
+    let descriptionLi = createElem('li');
+    description.appendChild(descriptionLi);
+    descriptionLi.setAttribute('id', 'person' + numberPerson + 'description' + i);
+    descriptionLi.setAttribute('class', 'list-group-item');
+
     switch(i) {
       case 1:
-      descriptionP.innerHTML = 'Рост: ' + character.height;
+      descriptionLi.innerHTML = 'Рост: ' + character.height;
       break;
       case 2:
-      descriptionP.innerHTML = 'Вес: ' + character.mass;
+      descriptionLi.innerHTML = 'Вес: ' + character.mass;
       break;
       case 3:
-      descriptionP.innerHTML = 'Цвет волос: ' + character.hair_color;
+      descriptionLi.innerHTML = 'Цвет волос: ' + character.hair_color;
       break;
       case 4:
-      descriptionP.innerHTML = 'Цвет глаз: ' + character.eye_color;
+      descriptionLi.innerHTML = 'Цвет глаз: ' + character.eye_color;
       break;
       case 5:
-      descriptionP.innerHTML = 'Дата рождения: ' + character.birth_year;
-      descriptionP.style.margin = '0 0 20px 0';
+      descriptionLi.innerHTML = 'Дата рождения: ' + character.birth_year;
+      descriptionLi.style.margin = '0 0 20px 0';
       break;
     }
   }
 }
-function seekCurrentCharacter(indexPerson) {
-  let nameCharacter = document.getElementById('person' + indexPerson).firstChild.innerHTML;
-  for (let i = 1; i < 10; i++) {
+
+function seekCurrentCharacter(numberPerson) {
+  let nameCharacter = getId('person' + numberPerson).firstChild.innerHTML;
+  for (let i in simpleArray) {
     let page = JSON.parse(localStorage.getItem('page' + i));
-    for (let j = 1; j < 11; j++) {
+    for (let j in simpleArray) {
       if (page.results[j - 1].name == nameCharacter) {
         return page.results[j - 1];
       }
     }
   }
 }
-function removeDescription(number) {
-  let person = document.getElementById('person' + number)
-  let description = document.getElementById('description' + number);
-  for (let i = 1; i < 6; i++) {
-    let descriptionP = document.getElementById('person' + number + 'description' + i);
-    description.removeChild(descriptionP);
-  }
-  person.removeChild(description);
+
+function removeDescription(numberPerson) {
+  let person = getId('person' + numberPerson)
+  person.removeChild(getId('description' + numberPerson));
 }
+
 // Pagination
 function prevPage() {
-  let numberCurrentPage = document.getElementById('currentPage').firstChild.innerHTML;
-  if (numberCurrentPage == 9) {
-    document.getElementById('nextButton').removeAttribute('disabled');
+  let currentPage = getId('currentPage').firstChild.innerHTML;
+  if (currentPage == 9) {
+    getId('nextButton').removeAttribute('disabled');
   } 
-  if (numberCurrentPage == 2) {
-    document.getElementById('prevButton').setAttribute('disabled', ''); 
+  if (currentPage == 2) {
+    getId('prevButton').setAttribute('disabled', ''); 
   }
-  document.getElementById('currentPage').firstChild.innerHTML = numberCurrentPage - 1;
-  numberCurrentPage -= 1;
-  cheackLocalStorage(numberCurrentPage);
+
+  getId('currentPage').firstChild.innerHTML = currentPage - 1;
+  cheackLocalStorage(currentPage - 1);
 }
+
 function nextPage() {
-  let numberCurrentPage = document.getElementById('currentPage').firstChild.innerHTML;
-  if (numberCurrentPage == 1) {
-    document.getElementById('prevButton').removeAttribute('disabled');
+  let currentPage = +getId('currentPage').firstChild.innerHTML;
+  if (currentPage == 1) {
+    getId('prevButton').removeAttribute('disabled');
   } 
-  if (numberCurrentPage > 7) {
-    document.getElementById('nextButton').setAttribute('disabled', ''); 
+  if (currentPage > 7) {
+    getId('nextButton').setAttribute('disabled', ''); 
   }
-  numberCurrentPage = +document.getElementById('currentPage').firstChild.innerHTML;
-  document.getElementById('currentPage').firstChild.innerHTML = numberCurrentPage + 1;
-  numberCurrentPage += 1;
-  cheackLocalStorage(numberCurrentPage);
+
+  getId('currentPage').firstChild.innerHTML = currentPage + 1;
+  cheackLocalStorage(currentPage + 1);
 }
 // Search
 function search() {
-  document.getElementById('currentPage').firstChild.innerHTML = 1;
+  getId('currentPage').firstChild.innerHTML = 1;
   let searchedCharacters = [];
-  if (document.getElementById('searchInput').value == '') { 
+
+  if (getId('searchInput').value == '') { 
     finalSearch(searchedCharacters);
     return;
   }
-  let searchingName = document.getElementById('searchInput').value;
-  document.getElementById('searchInput').value = '';
+
+  let searchingName = getId('searchInput').value;
+  getId('searchInput').value = '';
   hideAllPersons();
   searchingName = searchingName.toLowerCase();
   
-
   for (let i = 1; i < 10; i++) {
     let page = JSON.parse(localStorage.getItem('page' + i));
+
     if (!localStorage.getItem('page' + i)) { // Page not exist in Local Storage
       finalSearch(searchedCharacters);
       return;
     }
+
     if (i == 9) { // lastPage
       for (let j = 1; j < 8; j++) {
         let nameCharacter = page.results[j - 1].name.toLowerCase();
         if (nameCharacter.includes(searchingName)) { 
-          searchedCharacters.push(page.results[j - 1].name);
+          searchedCharacters.push( page.results[j - 1].name );
         }
+
         if (j == 7) { // lastCharacter
           finalSearch(searchedCharacters);
           return;
         }
       }
-
     } else { // notLastPage
-      for (let j = 1; j < 11; j++) {
+      for (let j in simpleArray) {
         let nameCharacter = page.results[j - 1].name.toLowerCase();
         if (nameCharacter.includes(searchingName)) {
-          searchedCharacters.push(page.results[j - 1].name);
+          searchedCharacters.push( page.results[j - 1].name );
         }
       }
     }
+
   }
 }
 function finalSearch(searchedCharacters) {
@@ -218,44 +237,52 @@ function finalSearch(searchedCharacters) {
   } else {
     showSearchingPersons(searchedCharacters);
   }
+
   createButtonShow();
   return;
 }
 function showSearchingPersons(searchedCharacters) {
   let quantityPersons = searchedCharacters.length + 1;
+
   if (searchedCharacters.length > 10) {
     quantityPersons = 11;
   }
+
   for (let i = 1; i < quantityPersons; i++) {
-    document.getElementById('person' + i).firstChild.innerHTML = searchedCharacters[i - 1];
+    getId('person' + i).firstChild.innerHTML = searchedCharacters[i - 1];
   }
+
   showAllPersons(quantityPersons);
 }
 function createButtonShow() {
-  let parent = document.getElementById('mainContent');
-  let but = document.createElement('button');
-  parent.appendChild(but);
-  but.setAttribute('onclick', 'cheackLocalStorage(1)');
-  but.setAttribute('id', 'buttonShow');
-  but.innerHTML = 'На главную';
+  let parent = getId('mainContent');
+  let buttonShow = createElem('button');
+
+  parent.appendChild(buttonShow);
+  buttonShow.setAttribute('onclick', 'cheackLocalStorage(1)');
+  buttonShow.setAttribute('id', 'buttonShow');
+  buttonShow.innerHTML = 'На главную';
 }
 // hide/show persons
 function hideAllPersons() {
   for (let i = 1; i < 11; i++) {
-    document.getElementById('person' + i).style.display = 'none';
+    getId('person' + i).style.display = 'none';
   }
-  document.getElementById('load').style.visibility="visible";
+  getId('load').style.visibility="visible";
 }
+
 function showAllPersons(quantity) {
   if (quantity > 11 || quantity < 1) {
     alert('Ошибка кол-ва показываемых персонажей');
     quantity = 10;
   }
-  if (document.getElementById('buttonShow')) {
-    document.getElementById('mainContent').removeChild( document.getElementById('buttonShow') );
+
+  if (getId('buttonShow')) {
+    getId('mainContent').removeChild( getId('buttonShow') );
   }
+
   for (let i = 1; i < quantity; i++) {
-    document.getElementById('person' + i).style.display = 'block';
+    getId('person' + i).style.display = 'block';
   }
-  document.getElementById('load').style.visibility="hidden";
+  getId('load').style.visibility = "hidden";
 }
