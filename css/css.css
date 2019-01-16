@@ -1,13 +1,10 @@
-html, ul, body, li {
+html, ul, li {
     margin: 0;
     padding: 0;
     color: yellow;
 }
-.background {
-    margin: 0;
-    padding: 0;
+.body {
     background: url(../images/background.jpg) no-repeat top center black;
-    height: 2340px;
 }
 
 #mainContent {
