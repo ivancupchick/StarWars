@@ -60,6 +60,7 @@ function renderData(pageNumber) {
   let request = new  XMLHttpRequest();
   request.open('GET', 'https://swapi.co/api/people/?page=' + pageNumber);
   request.send(null);
+  
   request.onreadystatechange = () => {
     if (request.readyState !== 4) {
         return;
@@ -76,27 +77,34 @@ function cheackerLocalStorage(pageNumber) {
     if ( !localStorage.getItem('page' + pageNumber) ) {
       return;
     }
+
     clearInterval(cheackerInterval);  
     return cheackLocalStorage(pageNumber); 
+
   }, 200);
 }
 
 function fillCharacters(pageNumber) {
   let page = JSON.parse( localStorage.getItem('page' + pageNumber) );
+
   page.results.forEach( (item, i) => {
     let numberPerson = +i + 1;
     getId('person' + numberPerson).firstChild.innerHTML = item.name;
   } );
+
   showAllPersons(page.results.length + 1);
 }
 
 // Description
 function personDescriptionUpDown(numberPerson) {
   if ( getId('description' + numberPerson) ) { //up
+
     let arrow = getId('personImg' + numberPerson);
     arrow.setAttribute('class', 'fas fa-arrow-down imagePerson');
     removeDescription(numberPerson);
+
   } else { // down
+
     let arrow = getId('personImg' + numberPerson);
     arrow.setAttribute('class', 'fas fa-arrow-left imagePerson');
 
@@ -107,6 +115,7 @@ function personDescriptionUpDown(numberPerson) {
     description.setAttribute('id', 'description' + numberPerson);
     description.setAttribute('class', 'list-group');
     createDescription(numberPerson);
+
   }
 }
 
@@ -144,12 +153,21 @@ function seekCurrentCharacter(numberPerson) {
   let nameCharacter = getId('person' + numberPerson).firstChild.innerHTML;
   for (let i in simpleArray) {
     let page = JSON.parse(localStorage.getItem('page' + i));
-    for (let j in simpleArray) {
-      if (page.results[j - 1].name == nameCharacter) {
-        return page.results[j - 1];
-      }
+    let character = characterFromPage(page, nameCharacter);
+    if ( character ) {
+      return character;
     }
   }
+}
+
+function characterFromPage (page, nameCharacter) {
+  let character = 0;
+  page.results.forEach( (item) => {
+    if (item.name == nameCharacter) {
+      character = item;
+    }
+  } );
+  return character;
 }
 
 function removeDescription(numberPerson) {
@@ -186,65 +204,51 @@ function nextPage() {
 
 // Search
 function search() {
-  getId('currentPage').firstChild.innerHTML = 1;
   let searchedCharacters = [];
+  let searchingName = getId('searchInput').value.toLowerCase();
 
-  if (getId('searchInput').value == '') { 
+  if ( !getId('searchInput').value ) { 
     finalSearch(searchedCharacters);
     return;
   }
 
-  let searchingName = getId('searchInput').value;
-  getId('searchInput').value = '';
-  hideAllPersons();
-  searchingName = searchingName.toLowerCase();
-  
-  for (let i = 1; i < 10; i++) {
+  for (let i in simpleArray) {
     let page = JSON.parse(localStorage.getItem('page' + i));
 
-    if (!localStorage.getItem('page' + i)) { // Page not exist in Local Storage
+    if ( !localStorage.getItem('page' + i) ) { // Page not exist in Local Storage
       finalSearch(searchedCharacters);
       return;
     }
 
-    if (i == 9) { // lastPage
-      for (let j = 1; j < 8; j++) {
-        let nameCharacter = page.results[j - 1].name.toLowerCase();
-        if (nameCharacter.includes(searchingName)) { 
-          searchedCharacters.push( page.results[j - 1].name );
-        }
-
-        if (j == 7) { // lastCharacter
-          finalSearch(searchedCharacters);
-          return;
-        }
+    page.results.forEach( (item) => {
+      let nameCharacter = item.name.toLowerCase();
+      if (nameCharacter.includes(searchingName)) { 
+        searchedCharacters.push( item.name );
       }
-    } else { // notLastPage
-      for (let j in simpleArray) {
-        let nameCharacter = page.results[j - 1].name.toLowerCase();
-        if (nameCharacter.includes(searchingName)) {
-          searchedCharacters.push( page.results[j - 1].name );
-        }
-      }
-    }
-
+    })
   }
 }
 
 function finalSearch(searchedCharacters) {
-  if (searchedCharacters.length == 0) {
+  getId('searchInput').value = '';
+  hideAllPersons();
+
+  if (!searchedCharacters.length) {
     alert('Ничего не найдено');
-    showAllPersons();
+    setCurrentPage1()
+
+    cheackLocalStorage(1);
     return;
   } else {
-    showSearchingPersons(searchedCharacters);
+    fillSearchingPersons(searchedCharacters);
   }
 
+  setCurrentPage1()
   createButtonShow();
   return;
 }
 
-function showSearchingPersons(searchedCharacters) {
+function fillSearchingPersons(searchedCharacters) {
   let quantityPersons = searchedCharacters.length + 1;
 
   if (searchedCharacters.length > 10) {
@@ -259,27 +263,31 @@ function showSearchingPersons(searchedCharacters) {
 }
 
 function createButtonShow() {
-  let parent = getId('mainContent');
   let buttonShow = createElem('button');
+  getId('mainContent').appendChild(buttonShow);
 
-  parent.appendChild(buttonShow);
   buttonShow.setAttribute('onclick', 'cheackLocalStorage(1)');
   buttonShow.setAttribute('id', 'buttonShow');
   buttonShow.innerHTML = 'На главную';
 }
 
+function setCurrentPage1() {
+  getId('currentPage').firstChild.innerHTML = 1;
+  getId('prevButton').setAttribute('disabled', ''); 
+  getId('nextButton').removeAttribute('disabled');
+}
+
 // hide/show persons
 function hideAllPersons() {
-  for (let i = 1; i < 11; i++) {
+  for (let i in simpleArray) {
     getId('person' + i).style.display = 'none';
   }
-  getId('load').style.visibility="visible";
+  getId('load').style.visibility = "visible";
 }
 
 function showAllPersons(quantity) {
   if (quantity > 11 || quantity < 1) {
-    alert('Ошибка кол-ва показываемых персонажей');
-    quantity = 10;
+    quantity = 11;
   }
 
   if (getId('buttonShow')) {
