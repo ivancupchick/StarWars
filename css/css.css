@@ -51,6 +51,17 @@ html, ul, li {
     border-radius: 10px;
     border: solid 1px black;
 }
+.MyPaginationDisabled {
+    width: 50px; 
+    background-color: yellow;
+    color: black;
+    border-radius: 10px;
+    border: solid 1px black;
+}
+.MyPaginationDisabled p {
+    position: relative;
+    top: 8px;
+}
 .MyPagination:hover {
     background: black;
     color: yellow;

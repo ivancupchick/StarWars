@@ -1,12 +1,14 @@
 "use strict";
 
-const simpleArray = [,'','','','','','','','','',''];
+const SIMPLE_ARRAY = [,'','','','','','','','','',''];
+const FIRST_PAGE = 1;
 
 window.onload = function() {
   getId('prevButton').setAttribute('disabled', '');
+  getId('prevButton').setAttribute('class', 'MyPaginationDisabled')
   createPersons();
   createArrows();
-  cheackLocalStorage(1);
+  cheackLocalStorage(FIRST_PAGE);
 }
 
 function getId(id) {
@@ -19,11 +21,11 @@ function createElem(name) {
 
 // Create Markup
 function createArrows() {
-  for (let i in simpleArray) {
-    let parrent = getId('person' + i);
+  for (let i in SIMPLE_ARRAY) {
+    let parrent = getId(`person${i}`);
     let arrow = createElem('i');
 
-    arrow.setAttribute('id', 'personImg' + i);
+    arrow.setAttribute('id', `personImg${i}`);
     arrow.setAttribute('class', 'fas fa-arrow-down imagePerson');
     parrent.appendChild(arrow);
   }
@@ -31,13 +33,13 @@ function createArrows() {
 
 function createPersons() {
   let ulPersons = getId('persons');
-  for (let i in simpleArray) {
+  for (let i in SIMPLE_ARRAY) {
     let liPerson = createElem('li');
     let namePerson = createElem('p');
 
-    liPerson.setAttribute('id', 'person' + i);
+    liPerson.setAttribute('id', `person${i}`);
     liPerson.setAttribute('class', 'person');
-    liPerson.setAttribute('onclick', 'personDescriptionUpDown(' + i + ')');
+    liPerson.setAttribute('onclick', `personDescriptionUpDown(${i})`);
     
     namePerson.setAttribute('class', 'textPerson');
     liPerson.appendChild(namePerson);
@@ -48,48 +50,45 @@ function createPersons() {
 // Fill fields
 function cheackLocalStorage(pageNumber) {
   hideAllPersons();
-  if (localStorage.getItem('page' + pageNumber)) {
+  if (localStorage.getItem(`page${pageNumber}`)) {
     fillCharacters(pageNumber);
   } else {
-    renderData(pageNumber);
-    cheackerLocalStorage(pageNumber);
+    renderData(pageNumber)
+      .then( () => {
+        fillCharacters(pageNumber);
+      })
+      .catch( error => console.log(error) );
   };
 }
 
 function renderData(pageNumber) {
-  let request = new  XMLHttpRequest();
-  request.open('GET', 'https://swapi.co/api/people/?page=' + pageNumber);
-  request.send(null);
-  
-  request.onreadystatechange = () => {
-    if (request.readyState !== 4) {
-        return;
+  return new Promise((resolve, reject) => {
+    let request = new  XMLHttpRequest();
+    request.open('GET', `https://swapi.co/api/people/?page=${pageNumber}`);
+    request.onload = function() {
+      if (this.status == 200) {
+        localStorage.setItem( `page${pageNumber}`, this.responseText);
+        resolve();
+      } else {
+        let error = new Error( this.statusText );
+        error.code = this.status;
+        reject(error);
       }
-    if (request.status === 200) {
-      let prePage = request.responseText;
-      localStorage.setItem('page' + pageNumber, prePage);
-    }
-  }
-}
-
-function cheackerLocalStorage(pageNumber) {
-  let cheackerInterval = setInterval( () => {
-    if ( !localStorage.getItem('page' + pageNumber) ) {
-      return;
-    }
-
-    clearInterval(cheackerInterval);  
-    return cheackLocalStorage(pageNumber); 
-
-  }, 200);
+    };
+    
+    request.onerror = function() {
+      reject( new Error("Network Error") );
+    };
+    request.send();
+  });
 }
 
 function fillCharacters(pageNumber) {
-  let page = JSON.parse( localStorage.getItem('page' + pageNumber) );
+  let page = JSON.parse( localStorage.getItem( `page${pageNumber}` ) );
 
   page.results.forEach( (item, i) => {
     let numberPerson = +i + 1;
-    getId('person' + numberPerson).firstChild.innerHTML = item.name;
+    getId( `person${numberPerson}` ).firstChild.innerHTML = item.name;
   } );
 
   showAllPersons(page.results.length + 1);
@@ -97,22 +96,22 @@ function fillCharacters(pageNumber) {
 
 // Description
 function personDescriptionUpDown(numberPerson) {
-  if ( getId('description' + numberPerson) ) { //up
+  if ( getId( `description${numberPerson}` ) ) { //up
 
-    let arrow = getId('personImg' + numberPerson);
+    let arrow = getId( `personImg${numberPerson}` );
     arrow.setAttribute('class', 'fas fa-arrow-down imagePerson');
-    removeDescription(numberPerson);
+    getId( `description${numberPerson}` ).remove();
 
   } else { // down
 
-    let arrow = getId('personImg' + numberPerson);
+    let arrow = getId( `personImg${numberPerson}` );
     arrow.setAttribute('class', 'fas fa-arrow-left imagePerson');
 
-    let person = getId('person' + numberPerson);
+    let person = getId( `person${numberPerson}` );
     let description = createElem('ul');
 
     person.appendChild(description);
-    description.setAttribute('id', 'description' + numberPerson);
+    description.setAttribute('id', `description${numberPerson}`);
     description.setAttribute('class', 'list-group');
     createDescription(numberPerson);
 
@@ -121,28 +120,27 @@ function personDescriptionUpDown(numberPerson) {
 
 function createDescription(numberPerson) {
   let character  = seekCurrentCharacter(numberPerson);
-  let description = getId('description' + numberPerson);
+  let description = getId(`description${numberPerson}`);
   for (let i = 1; i < 6; i++) {
     let descriptionLi = createElem('li');
     description.appendChild(descriptionLi);
-    descriptionLi.setAttribute('id', 'person' + numberPerson + 'description' + i);
     descriptionLi.setAttribute('class', 'list-group-item');
 
     switch(i) {
       case 1:
-      descriptionLi.innerHTML = 'Рост: ' + character.height;
+      descriptionLi.innerHTML = `Рост: ${character.height}`;
       break;
       case 2:
-      descriptionLi.innerHTML = 'Вес: ' + character.mass;
+      descriptionLi.innerHTML = `Вес: ${character.mass}`;
       break;
       case 3:
-      descriptionLi.innerHTML = 'Цвет волос: ' + character.hair_color;
+      descriptionLi.innerHTML = `Цвет волос: ${character.hair_color}`;
       break;
       case 4:
-      descriptionLi.innerHTML = 'Цвет глаз: ' + character.eye_color;
+      descriptionLi.innerHTML = `Цвет глаз: ${character.eye_color}`;
       break;
       case 5:
-      descriptionLi.innerHTML = 'Дата рождения: ' + character.birth_year;
+      descriptionLi.innerHTML = `Дата рождения: ${character.birth_year}`;
       descriptionLi.style.margin = '0 0 20px 0';
       break;
     }
@@ -150,9 +148,10 @@ function createDescription(numberPerson) {
 }
 
 function seekCurrentCharacter(numberPerson) {
-  let nameCharacter = getId('person' + numberPerson).firstChild.innerHTML;
-  for (let i in simpleArray) {
-    let page = JSON.parse(localStorage.getItem('page' + i));
+  let nameCharacter = getId( `person${numberPerson}` ).firstChild.innerHTML;
+
+  for (let i in SIMPLE_ARRAY) {
+    let page = JSON.parse( localStorage.getItem( `page${i}` ) );
     let character = characterFromPage(page, nameCharacter);
     if ( character ) {
       return character;
@@ -170,19 +169,16 @@ function characterFromPage (page, nameCharacter) {
   return character;
 }
 
-function removeDescription(numberPerson) {
-  let person = getId('person' + numberPerson)
-  person.removeChild(getId('description' + numberPerson));
-}
-
 // Pagination
 function prevPage() {
   let currentPage = getId('currentPage').firstChild.innerHTML;
   if (currentPage == 9) {
     getId('nextButton').removeAttribute('disabled');
+    getId('nextButton').setAttribute('class', 'MyPagination')
   } 
   if (currentPage == 2) {
     getId('prevButton').setAttribute('disabled', ''); 
+    getId('prevButton').setAttribute('class', 'MyPaginationDisabled')
   }
 
   getId('currentPage').firstChild.innerHTML = currentPage - 1;
@@ -193,9 +189,11 @@ function nextPage() {
   let currentPage = +getId('currentPage').firstChild.innerHTML;
   if (currentPage == 1) {
     getId('prevButton').removeAttribute('disabled');
+    getId('prevButton').setAttribute('class', 'MyPagination')
   } 
   if (currentPage > 7) {
     getId('nextButton').setAttribute('disabled', ''); 
+    getId('nextButton').setAttribute('class', 'MyPaginationDisabled')
   }
 
   getId('currentPage').firstChild.innerHTML = currentPage + 1;
@@ -212,10 +210,10 @@ function search() {
     return;
   }
 
-  for (let i in simpleArray) {
-    let page = JSON.parse(localStorage.getItem('page' + i));
+  for (let i in SIMPLE_ARRAY) {
+    let page = JSON.parse(localStorage.getItem( `page${i}` ));
 
-    if ( !localStorage.getItem('page' + i) ) { // Page not exist in Local Storage
+    if ( !localStorage.getItem( `page${i}` ) ) { // Page not exist in Local Storage
       finalSearch(searchedCharacters);
       return;
     }
@@ -234,10 +232,8 @@ function finalSearch(searchedCharacters) {
   hideAllPersons();
 
   if (!searchedCharacters.length) {
-    alert('Ничего не найдено');
     setCurrentPage1()
-
-    cheackLocalStorage(1);
+    cheackLocalStorage(FIRST_PAGE);
     return;
   } else {
     fillSearchingPersons(searchedCharacters);
@@ -256,7 +252,7 @@ function fillSearchingPersons(searchedCharacters) {
   }
 
   for (let i = 1; i < quantityPersons; i++) {
-    getId('person' + i).firstChild.innerHTML = searchedCharacters[i - 1];
+    getId( `person${i}` ).firstChild.innerHTML = searchedCharacters[i - 1];
   }
 
   showAllPersons(quantityPersons);
@@ -266,7 +262,7 @@ function createButtonShow() {
   let buttonShow = createElem('button');
   getId('mainContent').appendChild(buttonShow);
 
-  buttonShow.setAttribute('onclick', 'cheackLocalStorage(1)');
+  buttonShow.setAttribute('onclick', `cheackLocalStorage(${FIRST_PAGE})`);
   buttonShow.setAttribute('id', 'buttonShow');
   buttonShow.innerHTML = 'На главную';
 }
@@ -274,13 +270,14 @@ function createButtonShow() {
 function setCurrentPage1() {
   getId('currentPage').firstChild.innerHTML = 1;
   getId('prevButton').setAttribute('disabled', ''); 
+  getId('prevButton').setAttribute('class', 'MyPaginationDisabled')
   getId('nextButton').removeAttribute('disabled');
 }
 
 // hide/show persons
 function hideAllPersons() {
-  for (let i in simpleArray) {
-    getId('person' + i).style.display = 'none';
+  for (let i in SIMPLE_ARRAY) {
+    getId( `person${i}` ).style.display = 'none';
   }
   getId('load').style.visibility = "visible";
 }
@@ -291,11 +288,11 @@ function showAllPersons(quantity) {
   }
 
   if (getId('buttonShow')) {
-    getId('mainContent').removeChild( getId('buttonShow') );
+    getId('buttonShow').remove();
   }
 
   for (let i = 1; i < quantity; i++) {
-    getId('person' + i).style.display = 'block';
+    getId( `person${i}` ).style.display = 'block';
   }
   getId('load').style.visibility = "hidden";
 }
