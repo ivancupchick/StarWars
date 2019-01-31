@@ -65,7 +65,7 @@ function cheackLocalStorage(pageNumber) {
         localStorage.setItem( `page${pageNumber}`, JSON.stringify(response) );
         fillCharacters(pageNumber);
       })
-      .catch( (error) => console.log(error));
+      .catch( error => console.log(error));
   };
 }
 
