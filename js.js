@@ -53,34 +53,20 @@ function cheackLocalStorage(pageNumber) {
   if (localStorage.getItem(`page${pageNumber}`)) {
     fillCharacters(pageNumber);
   } else {
-    renderData(pageNumber)
-      .then( () => {
+    fetch(`https://swapi.co/api/people/?page=${pageNumber}`)
+      .then( response => {
+        if (response.status !== 200) {
+          console.log(`Error: ${response.status}`);
+        } else {
+          return response.json();
+        }
+      })
+      .then( response => {
+        localStorage.setItem( `page${pageNumber}`, JSON.stringify(response) );
         fillCharacters(pageNumber);
       })
-      .catch( error => console.log(error) );
+      .catch( (error) => console.log(error));
   };
-}
-
-function renderData(pageNumber) {
-  return new Promise((resolve, reject) => {
-    let request = new  XMLHttpRequest();
-    request.open('GET', `https://swapi.co/api/people/?page=${pageNumber}`);
-    request.onload = function() {
-      if (this.status == 200) {
-        localStorage.setItem( `page${pageNumber}`, this.responseText);
-        resolve();
-      } else {
-        let error = new Error( this.statusText );
-        error.code = this.status;
-        reject(error);
-      }
-    };
-    
-    request.onerror = function() {
-      reject( new Error("Network Error") );
-    };
-    request.send();
-  });
 }
 
 function fillCharacters(pageNumber) {
