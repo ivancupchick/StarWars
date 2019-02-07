@@ -29,7 +29,7 @@ html, ul, li {
 .person:hover {
     background:  yellow;
     color: black;
-    
+    cursor: pointer;   
 }
 .person {
     background: black;
@@ -50,6 +50,7 @@ html, ul, li {
     color: black;
     border-radius: 10px;
     border: solid 1px black;
+    cursor: pointer;
 }
 .MyPaginationDisabled {
     width: 50px; 
@@ -117,6 +118,7 @@ html, ul, li {
     border-bottom-right-radius: 9px;
     width: 30%;
     margin-bottom: 3px;
+    cursor: pointer;
 }
 .searchButton p {
     position: relative;
